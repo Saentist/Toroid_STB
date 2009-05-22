@@ -1,0 +1,145 @@
+* {
+    padding: 0;
+    margin: 0;
+} 
+
+body {
+background: #eee url(../../images/background.jpg) repeat-x top;
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-size: 12px;
+line-height: 18px;
+color: #333333;;
+}
+
+img { border: none; }
+a { color: #005EB0; text-decoration: none; }
+a:hover { text-decoration: underline; color : #000; }
+
+#wrap {
+width: 800px;
+margin: 0 auto;
+border-left: 1px solid #aaa;
+border-right: 1px solid #aaa;
+background: #fff;
+}
+
+#wrap .success, #wrap .notice, #wrap .cute{
+	border: 1px solid #0F0;
+	background: #EFE url('/images/face-wink.png') 10px 50% no-repeat;
+	width: 80%;
+	margin: 5px auto;
+	padding: 12px 10px 10px 60px;
+	font-size: 1.2em;
+}
+
+#wrap .new {
+text-align: right;
+width: 100%;
+}
+
+#header {
+height: 60px;
+margin: 0 auto;
+width: 800px;
+border-left: 1px solid #111;
+border-right: 1px solid #111;
+}
+
+#topnav {
+width: 800px;
+margin: 0 auto;
+border-top: 1px solid #aaa;
+border-left: 1px solid #aaa;
+border-right: 1px solid #aaa;
+border-bottom: 1px solid #aaa;
+background: #ddd;
+text-align: right;
+}
+
+#header h1 {
+padding: 12px 0 0 20px;
+font-size: 20px;
+letter-spacing: -2px;
+}
+#header h1 a {
+color: #fff;
+text-decoration: none;
+}
+#header h1 a:hover {
+text-decoration: none;
+
+}
+#header h2 {
+padding-left: 21px;
+font-size: 14px;
+color: #eee;
+font-weight: 100;
+}
+
+#left {
+float: left;
+width: 190px;
+padding: 10px;
+color: #777;
+}
+
+.lefta { color: #777; text-decoration: none; }
+#left h2 { color: #005EB0; padding: 15px 0 5px 10px; font-size: 17px; letter-spacing: -1px; font-weight: 100;}
+#left ul { color: #777; padding: 10px 0 10px 30px; list-style-type: square; }
+#left ul li { padding-bottom: 5px; }
+#left ul li a { color: #777; text-decoration: none;  }
+#left ul li a:hover { color: #000; }
+
+#center {
+margin-top: 20px;
+float: left;
+width: 538px;
+padding: 10px 20px 20px 20px;
+background: #fafafa;
+border: 1px solid #ccc;
+}
+
+#center h2  {
+font-size: 24px;
+letter-spacing: -3px;
+font-weight: 100;
+padding : 10px 0 15px 0;
+}
+
+#center legend  {
+font-size: 24px;
+letter-spacing: -3px;
+font-weight: 100;
+padding : 10px 0 15px 0;
+margin-left: 15px;
+}
+
+
+#center label {
+display: block;
+text-align: right;
+width: 300px;
+margin-bottom: 3px;
+}
+
+.smalllabel { width: 20px; }
+
+#right {
+float: right; 
+width: 160px;
+padding: 10px;
+}
+#right h2 { color: #005EB0; padding: 15px 0 5px 10px; font-size: 17px; letter-spacing: -1px; font-weight: 100;}
+#right ul { color: #777; padding: 10px 0 10px 30px; list-style-type: square; }
+#right ul li { padding-bottom: 5px; }
+#right ul li a { color: #777; text-decoration: none;  }
+#right ul li a:hover { color: #000; }
+
+#footer {
+margin-top: 20px;
+border-top: 1px solid #aaa;
+padding: 10px 0;
+text-align: center;
+font-size: 11px;
+background: #eee;
+}
