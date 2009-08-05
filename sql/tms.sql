@@ -60,8 +60,37 @@ SET character_set_client = @saved_cs_client;
 create unique index station_date_time_idx on tms_schedules(tf_station_num, tf_air_date, tf_air_time);
 create index air_date_idx on tms_schedules(tf_air_date);
 
-/* these two will be foreign keys to the programs and stations tables */
-create index database_key_idx on tms_schedules(tf_database_key);
-create index station_num_idx on tms_schedules(tf_station_num);
 
+/* Section 4.4.2, import statrec.txt */
+
+DROP TABLE IF EXISTS `tms_stations`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `tms_stations` (
+  `tf_station_num`	char(10) NOT NULL,
+  `tf_station_time_zone`	char(45) NOT NULL,
+  `tf_station_name`	char(40) NOT NULL,
+  `tf_station_call_sign`	char(10) NOT NULL,
+  `tf_station_affil`	char(25) NOT NULL,
+  `tf_station_city`	char(20) NOT NULL,
+  `tf_station_state`	char(15) NOT NULL,
+  `tf_station_zip_code`	char(12) NOT NULL,
+  `tf_station_country`	char(15) NOT NULL,
+  `tf_dma_name`		char(70) NOT NULL,
+  `tf_dma_num`		char(10) NOT NULL,
+  `tf_fcc_channel_num`	char(8) NOT NULL,
+  `tf_station_language`	char(40) NOT NULL,
+  PRIMARY KEY (tf_station_num)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tribune stations (statrec.txt)';
+SET character_set_client = @saved_cs_client;
+
+create unique index station_num_call_sign_idx on tms_stations(tf_station_num, tf_station_call_sign);
+
+alter table tms_schedules add foreign key station_num_idx (tf_station_num) references tms_stations(tf_station_num)
+	on update cascade  on delete cascade;
+
+/* this will be a foreign key to the programs table */
+create index database_key_idx on tms_schedules(tf_database_key);
+
+load data infile '/home/jesse/dev/toroid/sql/statrec.txt' replace into table tms_stations fields terminated by '|';
 load data infile '/home/jesse/dev/toroid/sql/skedrec.txt' replace into table tms_schedules fields terminated by '|';
