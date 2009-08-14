@@ -1,0 +1,122 @@
+#!/bin/bash
+
+#/*
+# * Copyright (c) 2009, Kentec Communications, Inc.
+# * All rights reserved.
+# *
+# * Redistribution and use in source and binary forms, with or without
+# * modification, are permitted provided that the following conditions are met:
+# *
+# *     * Redistributions of source code must retain the above copyright
+# *       notice, this list of conditions and the following disclaimer.
+# *     * Redistributions in binary form must reproduce the above copyright
+# *       notice, this list of conditions and the following disclaimer in the
+# *       documentation and/or other materials provided with the distribution.
+# *     * Neither the name of Kentec Communications, Inc. nor the names of its
+# *       contributors may be used to endorse or promote products derived
+# *       from this software without specific prior written permission.
+# *
+# * THIS SOFTWARE IS PROVIDED BY THE AUTHOR OR CONTRIBUTORS ``AS IS'' AND ANY
+# * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY
+# * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# */
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+export PATH
+
+# Toroid top level directory
+TOROID_DIR=/opt/toroid
+
+# Directory to put xml file in (eg. under a webserver document root)
+EXPORT_DIR=/var/www/vhosts/default/data/
+
+# php script to generate DataDirect formatted data
+DD_PHP=${DIR}/contrib/export/tms_to_datadirect.php
+
+# Number of days to generate DataDirect data for
+DD_DAYS=13
+
+# Output filename (xml and bzip)
+DD_XML=ddEPG.xml
+DD_BZ=${DD_XML}.bz2
+
+LOG_DIR="${TOROID_DIR}/log"
+LOG="${LOG_DIR}/`basename $0 .sh`.log"
+
+log()
+{
+	DT="`date '+%Y%m%d %T'`"
+	if [ "X$1" == "X-e" ]; then shift; echo ${1} 1>&2; fi
+	echo ${DT} ${1} >> ${LOG}
+}
+
+if [ ! -d ${DIR} ]
+then
+	echo "Error: ${DIR} is not a directory" 1>&2
+	exit 1
+fi
+
+cd ${DIR}
+touch ${LOG}
+
+if [ ! -w ${LOG} ]
+then
+	echo "Error: can't write to log file ${LOG}" 1>&2
+	exit 1
+fi
+
+if ! command -v php >/dev/null
+then
+	log -e "Error: can't run php"
+	exit 1
+fi
+
+log "==========="
+log "Starting"
+
+trap "log -e 'Error: exiting abnormally'" 0
+
+NEW=${DD_XML}.new
+if [ -f "${NEW}" ]
+then
+	log "Found old ${NEW}, removing"
+	rm -f ${NEW}
+fi
+
+log "Executing ${DD_PHP}"
+if ! php ${DD_PHP} -d days=${DD_DAYS} > ${NEW}
+then
+	log -e "Error running ${DD_PHP}, aborting!"
+	trap 0; exit 1
+fi
+
+sz=`ls -s ${NEW} | cut -d' ' -f1`
+if [ "$sz" -lt 64 ]
+then
+	log -e "Error, ${NEW} is too small, aborting!"
+	trap 0; exit 1
+fi
+
+log "Moving ${NEW} (size $sz) to ${DD_XML}"
+mv -f ${NEW} ${DD_XML}
+
+if ! bzip2 -9q < ${DD_XML} > ${DD_BZ}
+then
+	log -e "Error executing bzip2, removing ${DD_BZ}"
+	rm -f ${DD_BZ}
+	trap 0; exit 1
+fi
+
+log "Ending"
+log "==========="
+
+trap 0
+exit
+

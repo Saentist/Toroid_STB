@@ -1,0 +1,50 @@
+--------------------------------------------------------------------------------
+Toroid - Open Source Middleware 
+
+STATUS
+
+This is a a new project, and as such, there is not much
+documentation, and what you do find probably lags behind current
+code.  Don't expect much yet, but please view, and critique
+(in particular, your thoughts on the database structure
+and web interface).
+
+There are some install tips in the INSTALL file.  It is currently
+known to be out of date (a more up to date version was on the wiki,
+which is now down).
+
+Please join the mailing lists, or catch us on irc.
+
+
+DESIGN
+
+It is generally agreed that this project needs ground up design and
+planning.  Probably shoot for a proper implementation of the OpenIPTV
+specs.
+
+It is also apparent that such an approach will likely take years, and
+there is some virtue in the ad-hoc "throw something together as a start"
+approach.  It'll likely get something pieced together and a lot of lessons
+learned.
+
+So the current plan is to do both.  Anyone that wants to tinker can jump
+right in now.  Those wanting to help design and plan a proper system are
+quite welcome as well, and are encouraged to collaborate on the mailing lists
+or setup some tools to facilitate it (SourceForge has a number of hosted apps
+we can add easily).
+
+
+FILES
+
+The directory hierarchy is in flux, but right now you'll find:
+
+admin:		The webserver root for the administrative (backend) interface.
+	Point a virtual host entry here, or link to it from another webroot.
+contrib:	Contributions and examples not directly part of toroid.
+etc:		Toroid configuration files.
+gpl-2.0.txt:	GNU General Public License version 2
+import:		Tools to import data (primarily EPG) into toroid.
+INSTALL:	Installation info
+LICENSE:	License info
+README:		This file
+sql:		SQL schema

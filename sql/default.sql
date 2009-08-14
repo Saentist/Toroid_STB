@@ -202,11 +202,15 @@ SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 CREATE TABLE `t_settings` (
   `id` int(10) NOT NULL auto_increment,
-  `name` varchar(30) NOT NULL,
-  `value3` varchar(100) NOT NULL,
+  `module` varchar(30) NULL,
+  `name` varchar(60) NOT NULL,
+  `value` varchar(1024) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Toroid specific settings';
 SET character_set_client = @saved_cs_client;
+
+create unique index t_settings_idx on t_settings(module, name);
+
 
 --
 -- Dumping data for table `t_settings`

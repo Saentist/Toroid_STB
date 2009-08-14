@@ -1,14 +1,14 @@
 NameVirtualHost *
 <VirtualHost *>
-	ServerAdmin toroid-dev@bonobos.linopoly.com
+	ServerAdmin webmaster@localhost
 	ServerName localhost
 	ServerAlias toroid
-	DocumentRoot /opt/toroid/www
+	DocumentRoot /opt/toroid/admin
 	<Directory />
 		Options FollowSymLinks
 		AllowOverride None
 	</Directory>
-	<Directory /opt/toroid/www>
+	<Directory /opt/toroid/admin>
 		Options Indexes FollowSymLinks MultiViews
 		AllowOverride None
 		Order allow,deny

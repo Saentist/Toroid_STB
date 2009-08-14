@@ -1,15 +1,6 @@
-  ** This INSTALL file is dynamically generated from the wiki.
-  ** When updating documentation, 
-  ** Please update the version located on the wiki at: 
-  ** http://wiki.toroid.tv/wiki/index.php/INSTALL
--------------------------------------------------------------------------------------|
-Toroid - Open Source Middleware, Copyright 2008 Brian McManus, Linopoly, LLC GPL V2
-License in file '[[LICENSE]]'  bmcmanus@gmail.com
-
-This is a .01 release, don't expect much, but please
-view, and critique!  I'm especially interested in your
-thoughts on the database structure and web interface.
-
+-------------------------------------------------------------------------------------
+Toroid - Open Source Middleware, 
+Portions Copyright 2008 Brian McManus, Linopoly, LLC GPL V2
 
 Requirements: 
 Apache PHP5, PEAR, MySQL, subversion, xmltv

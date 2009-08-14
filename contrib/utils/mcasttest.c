@@ -3,8 +3,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>  /* socket(), setsockopt(), bind(), recvfrom(), sendto() */
 #include <errno.h>       /* perror() */
-#include <netinet/in.h>  /* IPPROTO_IP,
-sockaddr_in, htons(), htonl() */
+#include <netinet/in.h>  /* IPPROTO_IP, sockaddr_in, htons(), htonl() */
 #include <arpa/inet.h>   /* inet_addr() */
 #include <unistd.h>      /* fork(), sleep() */
 #include <sys/utsname.h> /* uname() */
@@ -15,8 +14,7 @@ sockaddr_in, htons(), htonl() */
 int main(int argc, char* argv[])
 {
    u_char no = 0;
-   u_int yes = 1;    /* Used with SO_REUSEADDR.
-		    In Linux both u_int */
+   u_int yes = 1;    /* Used with SO_REUSEADDR.  In Linux both u_int */
                      /* and u_char are valid. */
    int send_s, recv_s;  /* Sockets for sending and receiving. */
    u_char ttl;
@@ -31,8 +29,7 @@ int main(int argc, char* argv[])
    mcast_group.sin_family = AF_INET;
    mcast_group.sin_port = 4545;
    mcast_group.sin_addr.s_addr = inet_addr(argv[1]);
-   if ( (send_s=socket(AF_INET, SOCK_DGRAM, 0))
-< 0) {
+   if ( (send_s=socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
        perror ("send socket");
        exit(1);
    }
@@ -42,15 +39,13 @@ int main(int argc, char* argv[])
    } else {
        ttl = TTL;
    }
-   if (setsockopt(send_s, IPPROTO_IP,
-IP_MULTICAST_TTL, &ttl,
+   if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_TTL, &ttl,
            sizeof(ttl)) < 0) {
        perror ("ttl setsockopt");
        exit(1);
    }
    /* Disable Loop-back */
-   if (setsockopt(send_s, IPPROTO_IP,
-IP_MULTICAST_LOOP, &no,
+   if (setsockopt(send_s, IPPROTO_IP, IP_MULTICAST_LOOP, &no,
        sizeof(no)) < 0) {
         perror ("loop setsockopt");
        exit(1);
@@ -59,22 +54,18 @@ IP_MULTICAST_LOOP, &no,
        perror ("recv socket");
        exit(1);
    }
-   if (setsockopt(recv_s, SOL_SOCKET,
-SO_REUSEADDR, &yes, sizeof(yes)) < 0) {
+   if (setsockopt(recv_s, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0) {
        perror("reuseaddr setsockopt");
        exit(1);
    }
-   if (bind(recv_s, (struct
-sockaddr*)&mcast_group,sizeof(mcast_group)) < 0){
+   if (bind(recv_s, (struct sockaddr*)&mcast_group,sizeof(mcast_group)) < 0){
        perror ("bind");
        exit(1);
    }
-   /* Tell the kernel we want to join that
-multicast group. */
+   /* Tell the kernel we want to join that multicast group. */
    mreq.imr_multiaddr = mcast_group.sin_addr;
    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-   if (setsockopt(recv_s, IPPROTO_IP,
-IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+   if (setsockopt(recv_s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
        perror ("add_membership setsockopt");
        exit(1);
    }
@@ -93,10 +84,8 @@ IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
        char message [MAXLEN+1];
        for (;;) {
          len=sizeof(from);
-         if ( (n=recvfrom(recv_s, message,
-MAXLEN, 0,
-            (struct sockaddr*)&from, &len))
-< 0) {
+         if ( (n=recvfrom(recv_s, message, MAXLEN, 0,
+            (struct sockaddr*)&from, &len)) < 0) {
               perror ("recv");
               exit(1);
             }
@@ -109,16 +98,12 @@ MAXLEN, 0,
        }
        default: { /* Parent -> send. */
        char message [MAXLEN];
-       snprintf (message, sizeof(message),
-"Hello world, It's %s"
-            "saying HOLA\t(TTL==%d)\n",
-name.nodename, ttl);
+       snprintf (message, sizeof(message), "Hello world, It's %s"
+            "saying HOLA\t(TTL==%d)\n", name.nodename, ttl);
        for (;;) {
-         if (sendto(send_s, message,
-strlen(message), 0,
+         if (sendto(send_s, message, strlen(message), 0,
             (struct sockaddr*)&mcast_group,
-            sizeof(mcast_group)) <
-strlen(message)) {
+            sizeof(mcast_group)) < strlen(message)) {
             perror("sendto");
             exit(1);
          }
