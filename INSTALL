@@ -1,11 +1,14 @@
 -------------------------------------------------------------------------------------
-Toroid - Open Source Middleware, 
+Toroid - Open Source Middleware
 Portions Copyright 2008 Brian McManus, Linopoly, LLC GPL V2
 
 Requirements: 
-Apache PHP5, PEAR, MySQL, subversion, xmltv
-	-Debian/Ubuntu e.g. apt-get install apache2 php5 php5-mysql libapache2-mod-php5 php-pear subversion xmltv
+Apache PHP5, PEAR, MySQL, git
+	-Debian/Ubuntu e.g. apt-get install apache2 php5 php5-mysql libapache2-mod-php5 php-pear git-core
 
+Optional:
+xmltv
+	-Debian/Ubuntu: aptitude install xmltv
 
 Install instructions:
 Make sure you have pear, and install required PEAR components:
@@ -14,27 +17,30 @@ Make sure you have pear, and install required PEAR components:
 Create directory for toroid, I've opted to use /opt
  mkdir -p /opt
 
-Downloads files using subversion, allow Smarty templates cache writing.
+Downloads files using git, allow Smarty templates cache writing.
  cd /opt
- svn checkout http://svn.toroid.tv/toroid/
- chmod a+rwx /opt/toroid/www/templates_c
+ git clone git://toroid.git.sourceforge.net/gitroot/toroid
+ chmod a+rwx /opt/toroid/admin/templates_c
  cd toroid 
 
 
-Create MySQL database, Import 'default' database
+Create MySQL database, Import default database schema:
  mysqladmin create toroid
- mysql -u root toroid < default.sql
+ mysql -u root toroid < sql/default.sql
+
+Optional: Import 'tms' schema (if using Tribune Media Systems epg source):
+ mysql -u root toroid < sql/tms.sql
 
 Configure Apache to use a Virtual Host for toroid
- An example apache config is in /opt/toroid/apache2/001-toroid at this point.
+ An example apache config is in /opt/toroid/contrib/apache2/001-toroid at this point.
  You can do this with a subdomain, or an /etc/hosts entry.
- Or make an aliases directory of /toroid to /opt/toroid/www
-   e.g. Alias /toroid/ "/opt/toroid/www"
+ Or make an aliases directory of /toroid to /opt/toroid/admin
+   e.g. Alias /toroid/ "/opt/toroid/admin"
 
 Restart Apache2
  /etc/init.d/apache2 restart
 
-Configure XMLTV for developer use with schedulesdirect.org
+Optional: Configure XMLTV for developer use with schedulesdirect.org
  *Please note that production systems must obtain a license for
  *for Tribune Medias channel line up listing.
    sudo tv_grab_na_dd --configure --config-file /opt/toroid/etc/xmltv.conf
