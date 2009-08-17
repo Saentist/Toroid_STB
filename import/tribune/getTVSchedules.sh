@@ -77,7 +77,7 @@ fi
 cd ${IMPORT_DIR}
 touch _IMPORT_DIR_TEST_ 2>/dev/null
 
-if [ $? || ! -w _IMPORT_DIR_TEST_ ]
+if [ $? -gt 0 ] || [ ! -w _IMPORT_DIR_TEST_ ]
 then
 	echo "Error: can't write test file to ${IMPORT_DIR}" 1>&2
 	exit 1
@@ -110,7 +110,7 @@ fi
 
 if command -v wget >/dev/null
 then
-	GET="wget -nv -a ${LOG} "
+	GET="wget -Nnv -a ${LOG} "
 elif command -v curl >/dev/null
 then
 	GET="curl -sO "
@@ -133,13 +133,14 @@ do
 		log -e "Error getting ${F}, aborting!"
 		trap 0; exit 1
 	fi
-	gunzip ${GZ}
+	umask 022
+	gunzip --stdout ${GZ} > ${F}
 done
 
 i=0
 for f in ${DB_FILES[@]}
 do
-	file=${DIR}/${DB_FILES[$i]}
+	file=${IMPORT_DIR}/${DB_FILES[$i]}
 	tabl=${DB_TABLES[$i]}
 	if [ -f ${file} ]
 	then
