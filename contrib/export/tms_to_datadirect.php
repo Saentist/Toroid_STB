@@ -177,6 +177,8 @@ $X->writeAttribute("xsi:schemaLocation",
 	"urn:TMSWebServices http://docs.tms.tribune.com/tech/xml/schemas/tmsxtvd.xsd");
 
 
+# This prints all stations in your tms data, but the <lineups> (below) only includes those
+# from your middleware's channel lineups.  Perhaps we should restrict these, too?
 $X->startElement("stations");
    debug("reading tms_stations");
    $query = "select tf_station_num as id, "
@@ -211,16 +213,15 @@ $X->startElement("lineups");
   $X->writeAttribute("type", $lineup['type']);
 
    debug("reading valid_channel_list");
-   $query = "select distinct(vcl_xmltvchanid), "
-        	. " substring_index(substring_index(vcl_xmltvchanid, '.', 1),'I',-1) as station, "
-	. " vcl_channelno as channel "
-	. " from valid_channel_list "
-	. " where vcl_xmltvchanid != '' "
-	. " and vcl_xmltvchanid is not null";
+   $query = "select s.tf_station_num as station, c.id as channel "
+	. " from tms_stations s, t_channels c "
+	. " where s.tf_station_call_sign = c.callsign "
+	. " and c.enabled = B'1'";
    debug($query);
    $mysql_result = mysql_query($query, $mw_link);
    strlen($response = mysql_error($mw_link)) && choke($response);
    while ($row = mysql_fetch_array($mysql_result)) {
+	$stations[$row['station']] = $row['channel'];
 	$X->startElement("map");
 	$X->writeAttribute("station", $row['station']);
 	$X->writeAttribute("channel", $row['channel']);
@@ -264,6 +265,8 @@ $X->startElement("schedules");
    $mysql_result = mysql_query($query, $tms_link);
    strlen($response = mysql_error($tms_link)) && choke($response);
    while ($row = mysql_fetch_array($mysql_result)) {
+	if (! $stations[$row['station']]) continue;
+
 	$ts=strtotime( $row['date'] . " " 
 		. substr($row['time'],0,2) . ":" . substr($row['time'],2,2) . " GMT");
 	if ($from <= $ts && $ts < $to) {
