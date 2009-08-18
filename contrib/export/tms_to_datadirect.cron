@@ -38,13 +38,13 @@ TOROID_DIR=/opt/toroid
 EXPORT_DIR=/var/www/vhosts/default/data/
 
 # php script to generate DataDirect formatted data
-DD_PHP=${DIR}/contrib/export/tms_to_datadirect.php
+DD_PHP=${TOROID_DIR}/contrib/export/tms_to_datadirect.php
 
 # Number of days to generate DataDirect data for
 DD_DAYS=13
 
 # Output filename (xml and bzip)
-DD_XML=ddEPG.xml
+DD_XML=${EXPORT_DIR}/ddEPG.xml
 DD_BZ=${DD_XML}.bz2
 
 LOG_DIR="${TOROID_DIR}/log"
@@ -57,13 +57,13 @@ log()
 	echo ${DT} ${1} >> ${LOG}
 }
 
-if [ ! -d ${DIR} ]
+if [ ! -d ${TOROID_DIR} ]
 then
-	echo "Error: ${DIR} is not a directory" 1>&2
+	echo "Error: ${TOROID_DIR} is not a directory" 1>&2
 	exit 1
 fi
 
-cd ${DIR}
+cd ${TOROID_DIR}
 touch ${LOG}
 
 if [ ! -w ${LOG} ]
