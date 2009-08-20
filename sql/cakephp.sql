@@ -24,6 +24,7 @@ CREATE TABLE `t_channels` (
   `epg_station_id` varchar(128) COMMENT 'ID to tie to EPG channel, eg. Tribune Media station number (optional)',
   `bitrate` bigint(16) COMMENT 'Normal bitrate (bits per second) (optional)',
   `max_bitrate` bigint(16) COMMENT 'Maximum bitrate (bits per second) (optional)',
+  `ppv` bit(1) NOT NULL default B'0' COMMENT 'This Channel is Pay Per View',
 /* Need to add a field for default content rating */
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channels/IPTV streams';
@@ -128,7 +129,7 @@ CREATE TABLE `t_channel_group_tie` (
   `channel_num` bigint(10) NOT NULL,
   `channel_id` bigint(10) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Property tie table';
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Group tie table';
 SET character_set_client = @saved_cs_client;
 
 alter table t_channel_group_tie add foreign key (channel_group_id) references t_channel_groups(id)
@@ -136,6 +137,61 @@ alter table t_channel_group_tie add foreign key (channel_group_id) references t_
 alter table t_channel_group_tie add foreign key (channel_id) references t_channels(id)
         on update cascade  on delete cascade;
 create unique index t_channel_group_tie_idx on t_channel_group_tie(channel_group_id, channel_num);
+
+
+
+DROP TABLE IF EXISTS `t_packages`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_packages` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `name` varchar(128) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `enabled` bit(1) NOT NULL default B'1',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel Package';
+SET character_set_client = @saved_cs_client;
+
+INSERT INTO `t_channel_groups` (name) VALUES ('Basic'),('Premium'),('HBO Promo');
+
+
+DROP TABLE IF EXISTS `t_package_group_tie`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_package_group_tie` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `package_id` bigint(10) NOT NULL,
+  `channel_group_id` bigint(10) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Package/Group tie table';
+SET character_set_client = @saved_cs_client;
+
+alter table t_package_group_tie add foreign key (package_id) references t_packages(id)
+        on update cascade  on delete cascade;
+alter table t_package_group_tie add foreign key (channel_group_id) references t_channel_groups(id)
+        on update cascade  on delete cascade;
+create unique index t_package_group_tie_idx on t_package_group_tie(package_id, channel_group_id);
+
+
+
+DROP TABLE IF EXISTS `t_package_channel_tie`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_package_channel_tie` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `package_id` bigint(10) NOT NULL,
+  `channel_num` bigint(10) NOT NULL,
+  `channel_id` bigint(10) NOT NULL,
+  `ppv` bit(1) COMMENT 'Override Channel Pay Per View within this Package',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Package/Channel tie table';
+SET character_set_client = @saved_cs_client;
+
+alter table t_package_channel_tie add foreign key (package_id) references t_packages(id)
+        on update cascade  on delete cascade;
+alter table t_package_channel_tie add foreign key (channel_id) references t_channels(id)
+        on update cascade  on delete cascade;
+create unique index t_package_channel_tie_idx on t_package_channel_tie(package_id, channel_num);
 
 
 
