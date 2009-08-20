@@ -94,12 +94,48 @@ CREATE TABLE `t_channel_prop_tie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Property tie table';
 SET character_set_client = @saved_cs_client;
 
-
 alter table t_channel_prop_tie add foreign key (channel_id) references t_channels(id)
         on update cascade  on delete cascade;
 alter table t_channel_prop_tie add foreign key (channel_property_id) references t_channel_prop(id)
         on update cascade  on delete cascade;
 create unique index t_channel_prop_tie_idx on t_channel_prop_tie(channel_id, channel_property_id);
+
+
+DROP TABLE IF EXISTS `t_channel_groups`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_channel_groups` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `name` varchar(32) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `enabled` bit(1) NOT NULL default B'1',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel Groups';
+SET character_set_client = @saved_cs_client;
+
+INSERT INTO `t_channel_groups` (name) VALUES ('Basic'),('Expanded'),('Music'),
+	('HBO'),('Cinemax'),('Showtime'),('Starz'),
+	('Sports'),('News'),('Locals');
+
+
+
+DROP TABLE IF EXISTS `t_channel_group_tie`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_channel_group_tie` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `channel_group_id` bigint(10) NOT NULL,
+  `channel_num` bigint(10) NOT NULL,
+  `channel_id` bigint(10) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Property tie table';
+SET character_set_client = @saved_cs_client;
+
+alter table t_channel_group_tie add foreign key (channel_group_id) references t_channel_groups(id)
+        on update cascade  on delete cascade;
+alter table t_channel_group_tie add foreign key (channel_id) references t_channels(id)
+        on update cascade  on delete cascade;
+create unique index t_channel_group_tie_idx on t_channel_group_tie(channel_group_id, channel_num);
 
 
 
