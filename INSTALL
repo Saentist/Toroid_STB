@@ -1,54 +1,112 @@
--------------------------------------------------------------------------------------
-Toroid - Open Source Middleware
-Portions Copyright 2008 Brian McManus, Linopoly, LLC GPL V2
+Toroid - OpenSource IPTV Middleware
 
-Requirements: 
-Apache PHP5, PEAR, MySQL, git
-	-Debian/Ubuntu e.g. apt-get install apache2 php5 php5-mysql libapache2-mod-php5 php-pear git-core
+Requirements
 
-Optional:
-xmltv
-	-Debian/Ubuntu: aptitude install xmltv
+ Required software:
 
-Install instructions:
+    * Apache2 (most any php-capable web server should do, actually)
+    * PHP5
+          o mysql support 
+    * PEAR
+          o Auth
+          o MDB2
+          o MDB2_Driver_mysql
+          o Pager 
+    * MySQL
+    * git 
+
+ Optional software:
+
+    * xmltv 
+
+
+Install instructions
+
+ Software
+
+Install the appropriate packages for your distribution; for Debian/Ubuntu that is:
+
+# aptitude install apache2 php5 php5-mysql libapache2-mod-php5 php-pear mysql-client mysql-server git-core
+
+And optionally:
+
+# aptitude install xmltv
+
 Make sure you have pear, and install required PEAR components:
-	pear install MDB2 MDB2_Driver_mysql Auth Pager
+
+# pear install MDB2 MDB2_Driver_mysql Auth Pager
+
+
+ Toroid
 
 Create directory for toroid, I've opted to use /opt
- mkdir -p /opt
 
-Downloads files using git, allow Smarty templates cache writing.
- cd /opt
- git clone git://toroid.git.sourceforge.net/gitroot/toroid
- chmod a+rwx /opt/toroid/admin/templates_c
- cd toroid 
+# mkdir -p /opt
+
+Downloads files using git:
+
+# cd /opt
+# git clone git://toroid.git.sourceforge.net/gitroot/toroid
+
+Allow Smarty templates cache writing:
+
+# chmod a+rwx toroid/www/templates_c
 
 
-Create MySQL database, Import default database schema:
- mysqladmin create toroid
- mysql -u root toroid < sql/default.sql
+ MySQL
 
-Optional: Import 'tms' schema (if using Tribune Media Systems epg source):
- mysql -u root toroid < sql/tms.sql
+Create MySQL database and user, then import the schema and default data:
 
-Configure Apache to use a Virtual Host for toroid
- An example apache config is in /opt/toroid/contrib/apache2/001-toroid at this point.
- You can do this with a subdomain, or an /etc/hosts entry.
- Or make an aliases directory of /toroid to /opt/toroid/admin
-   e.g. Alias /toroid/ "/opt/toroid/admin"
+# cd /opt/toroid
+# mysqladmin create toroid
+# mysql -u root toroid < sql/default.sql
+# mysql -u root -e "grant all on toroid.* to toroid@localhost identified by 'ToRoidDEV'" mysql
+
+Edit config.php to match your MySQL parameters, and review other settings:
+
+# vi /opt/toroid/www/includes/config.php
+# grep dsn /opt/toroid/www/includes/config.php 
+$toroid['db']['dsn'] = 'mysql://toroid:ToRoidDEV@localhost/toroid';
+
+
+ Apache
+
+Configure an Apache Virtual Host for toroid, or make it accessible somewhere to your web server. An example apache2 config is in /opt/toroid/contrib/apache2/001-toroid as a starting point. You can setup a dedicated subdomain (eg. toroid.yourdomain.com), or just alias /toroid/ on an existing site to /opt/toroid/admin:
+
+Alias /toroid/ "/opt/toroid/admin"
 
 Restart Apache2
- /etc/init.d/apache2 restart
 
-Optional: Configure XMLTV for developer use with schedulesdirect.org
- *Please note that production systems must obtain a license for
- *for Tribune Medias channel line up listing.
-   sudo tv_grab_na_dd --configure --config-file /opt/toroid/etc/xmltv.conf
-Login, point your browser to your server
- http://toroid.whatever.host/
+/etc/init.d/apache2 restart
 
- default username: admin
- default password: 2ez4u
-  (I know, I know, a tad bit insecure, but when we have
-   an automated install process we will prompt them for it.)
 
+ Tribune Media Systems (Optional)
+
+If you're using EPG data from Tribune Media, import the 'tms' schema:
+
+# mysql -u root toroid < sql/tms.sql
+
+(Need cron import instructions here.)
+
+
+ XmlTV (Optional)
+
+Configure XMLTV for development use with schedulesdirect.org
+
+# tv_grab_na_dd --configure --config-file /opt/toroid/etc/xmltv.conf
+
+Please note that SchedulesDirect does not currently allow commercial use of their service.
+
+
+Login
+
+ Point your browser to your install location:
+
+http://toroid.yourdomain.com/
+  or
+http://www.yourdomain.com/toroid/
+
+username: admin
+password: 2ez4u
+
+Once logged in, you should change the default admin password (and delete other operator accounts) or create a new operator and delete the others. 
