@@ -270,10 +270,6 @@ CREATE TABLE `tms_programs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tribune programs (progrec.txt)';
 SET character_set_client = @saved_cs_client;
 
-/*
-create unique index station_num_call_sign_idx on tms_stations(tf_station_num, tf_station_call_sign);
-*/
-
 alter table tms_schedules add foreign key database_key_idx (tf_database_key) references tms_programs(tf_database_key)
 	on update cascade  on delete cascade;
 

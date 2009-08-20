@@ -1,6 +1,7 @@
 /*
-  This is a reworking of the toroid sql schema according to cakephp naming conventions,
-  plus ongoing additions/work.  We don't yet have incremental updates/sql alters.
+  This is a reworking of the toroid sql schema,
+  eventually towards cakephp naming conventions.
+  We don't yet have incremental updates/sql alters.
 */
 
 DROP TABLE IF EXISTS `t_channels`;
@@ -23,23 +24,12 @@ CREATE TABLE `t_channels` (
   `epg_station_id` varchar(128) COMMENT 'ID to tie to EPG channel, eg. Tribune Media station number (optional)',
   `bitrate` bigint(16) COMMENT 'Normal bitrate (bits per second) (optional)',
   `max_bitrate` bigint(16) COMMENT 'Maximum bitrate (bits per second) (optional)',
-/*
-  Need to add some field for things like:
-	default content rating
-	encoding format (mpeg 2/4, etc.)
-	sd / hd
-*/
+/* Need to add a field for default content rating */
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channels/IPTV streams';
 SET character_set_client = @saved_cs_client;
 
---
--- Dumping data for table `t_channels`
---
-
-LOCK TABLES `t_channels` WRITE;
-INSERT INTO `t_channels` VALUES (1,'EAS','EAS','225.0.0.1',3000,1),(2,'CBS','KMVT','226.0.0.2',3000,1);
-UNLOCK TABLES;
+INSERT INTO `t_channels` (name, display_name, ip_addr, port, status)  VALUES ('Channel X','Chan X','239.1.2.3',3000,'enabled');
 
 
 DROP TABLE IF EXISTS `t_genres`;
@@ -54,17 +44,15 @@ CREATE TABLE `t_genres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Genres';
 SET character_set_client = @saved_cs_client;
 
-LOCK TABLES `t_genres` WRITE;
 INSERT INTO `t_genres` (name) VALUES ('General'),('News'),('Sports'),('Family'),('Local'),
 	('Movie'),('Educational'),('Adult'),('Politics'),('Religion'),('Shopping'),('Music'),
 	('Comedy'),('Drama');
-UNLOCK TABLES;
 
 
-DROP TABLE IF EXISTS `t_channel_genres`;
+DROP TABLE IF EXISTS `t_channel_genres_tie`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-CREATE TABLE `t_channel_genres` (
+CREATE TABLE `t_channel_genres_tie` (
   `id` bigint(10) NOT NULL auto_increment,
   `channel_id` bigint(10) NOT NULL,
   `genre_id` bigint(10) NOT NULL,
@@ -72,12 +60,100 @@ CREATE TABLE `t_channel_genres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Genre tie table';
 SET character_set_client = @saved_cs_client;
 
-
-alter table t_channel_genres add foreign key (channel_id) references t_channels(id)
+alter table t_channel_genres_tie add foreign key (channel_id) references t_channels(id)
         on update cascade  on delete cascade;
-alter table t_channel_genres add foreign key (genre_id) references t_genres(id)
+alter table t_channel_genres_tie add foreign key (genre_id) references t_genres_tie(id)
         on update cascade  on delete cascade;
+create unique index t_channel_genre_idx on t_channel_genres_tie(channel_id, genre_id);
 
-create unique index t_channel_genre_idx on t_channel_genres(channel_id, genre_id);
 
+
+DROP TABLE IF EXISTS `t_channel_prop`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_channel_prop` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `name` varchar(32) NOT NULL,
+  `description` varchar(128) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel Properties';
+SET character_set_client = @saved_cs_client;
+
+INSERT INTO `t_channel_prop` (name) VALUES ('MPEG-2'),('MPEG-4'),('SD'),('HD');
+
+
+DROP TABLE IF EXISTS `t_channel_prop_tie`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_channel_prop_tie` (
+  `id` bigint(10) NOT NULL auto_increment,
+  `channel_id` bigint(10) NOT NULL,
+  `channel_property_id` bigint(10) NOT NULL,
+  `mandatory` bit(1) NOT NULL default B'1',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Toroid Channel/Property tie table';
+SET character_set_client = @saved_cs_client;
+
+
+alter table t_channel_prop_tie add foreign key (channel_id) references t_channels(id)
+        on update cascade  on delete cascade;
+alter table t_channel_prop_tie add foreign key (channel_property_id) references t_channel_prop(id)
+        on update cascade  on delete cascade;
+create unique index t_channel_prop_tie_idx on t_channel_prop_tie(channel_id, channel_property_id);
+
+
+
+DROP TABLE IF EXISTS `t_company`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_company` (
+  `id` mediumint(10) NOT NULL auto_increment,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `address1` varchar(50) NOT NULL,
+  `address2` varchar(50) NOT NULL,
+  `address3` varchar(50) NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `state` varchar(50) NOT NULL,
+  `zip` varchar(5) NOT NULL,
+  `default` int(1) NOT NULL default '0',
+  `enabled` int(1) NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=latin1 COMMENT='Companies table for Toroid';
+SET character_set_client = @saved_cs_client;
+
+
+DROP TABLE IF EXISTS `t_operators`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_operators` (
+  `id` smallint unsigned NOT NULL auto_increment,
+  `username` varchar(64) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `firstname` varchar(32),
+  `lastname` varchar(32),
+  `email` varchar(90) NOT NULL,
+  `enabled` bit(1) NOT NULL default B'1',
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='Operators allowed to login to Toroid management';
+SET character_set_client = @saved_cs_client;
+
+INSERT INTO `t_operators` VALUES (1,'admin','1b2a7ebf667c4af863afe00866265c1b','System','Administrator','',1);
+
+
+
+DROP TABLE IF EXISTS `t_settings`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `t_settings` (
+  `id` int(10) NOT NULL auto_increment,
+  `module` varchar(32) NULL,
+  `name` varchar(64) NOT NULL,
+  `value` varchar(1024) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Toroid specific settings';
+SET character_set_client = @saved_cs_client;
+
+create unique index t_settings_idx on t_settings(module, name);
 

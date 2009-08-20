@@ -189,7 +189,7 @@ SET character_set_client = @saved_cs_client;
 
 LOCK TABLES `t_operators` WRITE;
 /*!40000 ALTER TABLE `t_operators` DISABLE KEYS */;
-INSERT INTO `t_operators` VALUES (1,'admin','1b2a7ebf667c4af863afe00866265c1b','System','Administrator','',1),(4,'brian','9106d106125d95b0dab1469dace5466c','Brian','McManus','bmcmanus@gmail.com',1);
+INSERT INTO `t_operators` VALUES (1,'admin','1b2a7ebf667c4af863afe00866265c1b','System','Administrator','',1);
 /*!40000 ALTER TABLE `t_operators` ENABLE KEYS */;
 UNLOCK TABLES;
 
