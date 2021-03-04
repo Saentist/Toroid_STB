@@ -1,4 +1,4 @@
-<?
+<?php
 /* Toroid -- An open source middleware for IPTV deployments.
  *
  * Copyright (C) 2007 - 2008, Linopoly, LLC
@@ -35,7 +35,7 @@ $count = count($form);
 			}
 
 	} else {
-		if ($i < $count-1) { 
+		if ($i < $count-1) {
 		$names .= $key;
 		$values .= "'$value'";
 		} else {
@@ -69,7 +69,7 @@ $count = count($form);
 		$values .= "$key='$value',";
 		}
 	} else {
-		if ($i < $count-1) { 
+		if ($i < $count-1) {
 		$values .= "$key='$value'";
 		} else {
 			//Dont insert submit form button

@@ -1,4 +1,4 @@
-<?
+<?php
 /* Toroid -- An open source middleware for IPTV deployments.
  *
  * Copyright (C) 2007 - 2008, Linopoly, Inc

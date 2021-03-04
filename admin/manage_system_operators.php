@@ -1,4 +1,4 @@
-<?
+<?php
 /* Toroid -- An open source middleware for IPTV deployments.
  *
  * Copyright (C) 2007 - 2008, Linopoly, LLC
@@ -104,7 +104,7 @@ $body .= "</table>";
 
 //Render the the system status module
 if($_GET[action] != null) {
-	$buttonValue = "Save"; 
+	$buttonValue = "Save";
 } else {
 	$buttonValue = "Add";
 }
@@ -119,7 +119,7 @@ if($_GET[action] != null) {
 
 			array('label' => '', 'type' => 'submit', 'name' => 'Submit', 'value' => $buttonValue)
 		);
-	
+
         if($_POST[Submit] != null) {
 	// Dont show form again if there was a recent submit (like an edit or add)
 	} else {

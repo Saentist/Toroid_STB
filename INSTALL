@@ -6,27 +6,29 @@ Requirements
 
     * Apache2 (most any php-capable web server should do, actually)
     * PHP5
-          o mysql support 
+          o mysql support
     * PEAR
           o Auth
           o MDB2
           o MDB2_Driver_mysql
-          o Pager 
+          o Pager
     * MySQL
-    * git 
+    * git
 
  Optional software:
 
-    * xmltv 
+    * xmltv
 
 
 Install instructions
 
  Software
 
-Install the appropriate packages for your distribution; for Debian/Ubuntu that is:
+Install the appropriate packages for your distribution,
+for Debian/Ubuntu that is:
 
-# aptitude install apache2 php5 php5-mysql libapache2-mod-php5 php-pear mysql-client mysql-server git-core
+# aptitude install apache2 php5 php5-mysql libapache2-mod-php5 \
+php-pear mysql-client mysql-server git-core
 
 And optionally:
 
@@ -64,14 +66,20 @@ Create MySQL database and user, then import the schema and default data:
 
 Edit config.php to match your MySQL parameters, and review other settings:
 
-# vi /opt/toroid/www/includes/config.php
-# grep dsn /opt/toroid/www/includes/config.php 
+# nano /opt/toroid/www/includes/config.php
+# grep dsn /opt/toroid/www/includes/config.php
 $toroid['db']['dsn'] = 'mysql://toroid:ToRoidDEV@localhost/toroid';
 
 
  Apache
 
-Configure an Apache Virtual Host for toroid, or make it accessible somewhere to your web server. An example apache2 config is in /opt/toroid/contrib/apache2/001-toroid as a starting point. You can setup a dedicated subdomain (eg. toroid.yourdomain.com), or just alias /toroid/ on an existing site to /opt/toroid/admin:
+Configure an Apache Virtual Host for toroid,
+or make it accessible somewhere to your web server.
+An example apache2 config is in
+/opt/toroid/contrib/apache2/001-toroid
+as a starting point.
+You can setup a dedicated subdomain (eg. toroid.yourdomain.com),
+or just alias /toroid/ on an existing site to /opt/toroid/admin:
 
 Alias /toroid/ "/opt/toroid/admin"
 
@@ -109,4 +117,6 @@ http://www.yourdomain.com/toroid/
 username: admin
 password: 2ez4u
 
-Once logged in, you should change the default admin password (and delete other operator accounts) or create a new operator and delete the others. 
+Once logged in, you should change the default admin password
+(and delete other operator accounts)
+or create a new operator and delete the others.
